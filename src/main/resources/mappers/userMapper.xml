@@ -18,7 +18,12 @@
 		#{vo.nickName},
 		#{vo.tel},
 		#{vo.name},
-		#{vo.birthday},
+		<if test='vo.birthday.equals("")'>
+ 			birthday='1900-01-01',
+		</if>
+		<if test='!vo.birthday.equals("")'>
+			birthday=#{vo.birthday},
+		</if>
 		#{vo.gender},
 		#{vo.address},
 		#{vo.email},
@@ -38,7 +43,12 @@
  			nickName=#{vo.nickName},
  			tel=#{vo.tel},
  			name=#{vo.name},
- 			birthday=#{vo.birthday},
+ 			<if test='vo.birthday.equals("")'>
+ 				birthday='1900-01-01',
+ 			</if>
+ 			<if test='!vo.birthday.equals("")'>
+	 			birthday=#{vo.birthday},
+ 			</if>
  			gender=#{vo.gender},
  			address=#{vo.address},
  			email=#{vo.email}

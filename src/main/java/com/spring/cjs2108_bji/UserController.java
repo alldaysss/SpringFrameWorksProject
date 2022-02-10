@@ -40,15 +40,8 @@ public class UserController {
 	//회원 가입처리하기
 	@RequestMapping(value="/userInput", method = RequestMethod.POST)
 	public String userInputPost(MultipartFile fName, UserVO vo) {
-		/*
-		 * // 아이디 중복체크 if(userService.getIdCheck(vo.getMid()) != null) { return
-		 * "redirect:/msg/" + msgFlag; } // 닉네임 중복체크
-		 * if(userService.getNickNameCheck(vo.getNickName()) != null) { return
-		 * "redirect:/msg/" + msgFlag; }
-		 */
 		// 비밀번호 암호화처리
 		vo.setPwd(passwordEncoder.encode(vo.getPwd()));
-		
 		// DB에 가입회원 등록하기
 		int res = userService.setUserInput(fName, vo);
 		if(res == 1) msgFlag = "userInputOk";
@@ -93,7 +86,6 @@ public class UserController {
 	@RequestMapping(value="/userLogin", method = RequestMethod.POST)
 	public String userLoginPost(String mid, String pwd, HttpSession session, HttpServletResponse response, HttpServletRequest request, Model model) {
 		UserVO vo = userService.getIdCheck(mid);
-		
 		if(vo != null && passwordEncoder.matches(pwd, vo.getPwd()) && vo.getUserDel().equals("NO")) {
 			String strLevel = "";
 		  if(vo.getLevel() == 0) strLevel = "관리자";
