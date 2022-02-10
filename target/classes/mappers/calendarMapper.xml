@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_bji.dao.CalendarDAO">
+	
+	<select id="getCalendarList" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where mid=#{mid} and date_format(cDate, '%Y-%m')=#{ym} order by cDate, part;
+	</select>
+	
+	<select id="getAdCalendarList" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where date_format(cDate, '%Y-%m')=#{ym} order by cDate, part;
+	</select>
+	
+	<select id="adCalendarPicker" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where date_format(cDate, '%Y-%m-%d')=date_format(#{cDate}, '%Y-%m-%d');
+	</select>
+	
+	<select id="AlvosDataGet" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol;
+	</select>
+	
+	<select id="AlvosCateGet" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol where idx group by itemCode desc;
+	</select>
+	
+	<select id="selectCalendarList" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where mid=#{sMid} and date_format(cDate, '%Y-%m-%d')=#{ymd};
+	</select>
+	
+	<select id="calendarPicker" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where date_format(cDate, '%Y-%m-%d')=date_format(#{cDate}, '%Y-%m-%d');
+	</select>
+	
+	<select id="getScheduleSearch" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select * from calendar where idx=#{idx};
+	</select>
+	
+	<insert id="setCalendarInsert">
+		<if test='vo.part == "시음"'>
+			insert into calendar values (default, #{vo.mid}, #{vo.CDate}, #{vo.part}, #{vo.itemCode}, #{vo.reItemName}, #{vo.content});
+		</if>
+		<if test='vo.part != "시음"'>
+			insert into calendar values (default, #{vo.mid}, #{vo.CDate}, #{vo.part}, '기타', '기타', '기타방문');
+		</if>
+	</insert>
+	
+	<delete id="deleteTimes">
+		delete from calendar where idx = #{idx};
+	</delete>
+</mapper>

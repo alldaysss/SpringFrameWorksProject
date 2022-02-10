@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_bji.dao.UserDAO">
+	<select id="getIdCheck" resultType="com.spring.cjs2108_bji.vo.UserVO">
+		select * from user where mid = #{mid};
+	</select>
+
+	<select id="getNickNameCheck" resultType="com.spring.cjs2108_bji.vo.UserVO">
+		select * from user where nickName = #{nickName};
+	</select>
+	
+	<insert id="setUserInput">
+		insert into User values(
+		default,
+		#{vo.photo},
+		#{vo.mid},
+		#{vo.pwd},
+		#{vo.nickName},
+		#{vo.tel},
+		#{vo.name},
+		#{vo.birthday},
+		#{vo.gender},
+		#{vo.address},
+		#{vo.email},
+		default,
+		default,
+		default);
+	</insert>
+	
+	<select id="getBoardWriteCnt" resultType="int" >
+		select count(*) from board where mid = #{mid};
+	</select>
+	
+ 	<update id="setUserUpdate">
+ 		update user set 
+ 			photo=#{vo.photo},
+ 			pwd=#{vo.pwd},
+ 			nickName=#{vo.nickName},
+ 			tel=#{vo.tel},
+ 			name=#{vo.name},
+ 			birthday=#{vo.birthday},
+ 			gender=#{vo.gender},
+ 			address=#{vo.address},
+ 			email=#{vo.email}
+ 			where mid=#{vo.mid};
+ 	</update>
+ 	
+ 	<update id="setUserDelete">
+ 		update user set userDel = 'OK' where mid = #{mid};
+ 	</update>
+ 	
+ 	<select id="getIdSearcher" resultType="com.spring.cjs2108_bji.vo.UserVO">
+ 		select * from user where email = #{toMail} and tel = #{tel} and name = #{name};
+ 	</select>
+ 	
+ 	<select id="getPwdSearcher" resultType="com.spring.cjs2108_bji.vo.UserVO">
+ 		select * from user where mid = #{mid} and email = #{toMail};
+ 	</select>
+ 	
+ 	<update id="setNewPwdChange">
+ 		update user set pwd = #{pwd} where mid = #{mid};
+ 	</update>
+ 	
+ 	
+ 	
+</mapper>

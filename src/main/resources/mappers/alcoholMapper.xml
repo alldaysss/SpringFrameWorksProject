@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_bji.dao.AlcoholDAO">
+
+	<select id="getAlcoholCategory" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol order by idx desc;
+	</select>
+	
+	<select id="selectAlcoholCategory" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol where itemCode = #{itemCode} order by idx desc;
+	</select>
+	
+	<select id="getCategorySearch" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol where idx = #{idx};
+	</select>
+	
+	<select id="getAlcoholProduct" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol where idx = #{idx};
+	</select>
+	
+	<select id="getSearchAlcoholProduct" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		select * from alcohol where idx = #{idx};
+	</select>
+	
+	<select id="getCartList" resultType="com.spring.cjs2108_bji.vo.CartVO">
+		select *, sum(quanTity) as quanTitySum  from cart where mid=#{mid} group by itemIdx;
+	</select>
+	
+	<select id="getOrderMaxIdx" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select max(idx) as maxIdx from alOrderProcess;
+	</select>
+	
+	<select id="getOrderProcess" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select * from alOrderProcess where orderIdx = #{orderIdx};
+	</select>
+
+	<select id="getOrderDuration" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select * from alOrderProcess <![CDATA[ 
+		where mid= #{mid} and date(orderDate) >= date(#{startDates}) and date(orderDate) <= date(#{endDates}) order by orderDate desc]]>;
+	</select>
+	
+	<select id="deliverConfirm" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select * from alOrderProcess where orderIdx = #{orderIdx};
+	</select>
+	
+	<select id="totRecCnt" resultType="int">
+    <if test="mid == '전체'">
+	    select count(*) from alOrderProcess;
+    </if>
+    <if test="mid != '전체'">
+	    select count(*) from alOrderProcess where mid = #{mid};
+    </if>
+	</select>
+	
+	<select id="totRecCntorderPeriod" resultType="int">
+		select count(*) from alOrderProcess where mid = #{mid};
+	</select>
+	
+	<select id="getUserOrder" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select * from alOrderProcess where mid = #{mid} order by idx desc limit #{startIndexNo}, #{pageSize};
+	</select>
+	
+	<select id="totRecCntAlorderProcess" resultType="int">
+		select count(*) from alOrderProcess;
+	</select>
+	
+	<select id="adminOrderStatus" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select * from alOrderProcess order by orderIdx desc limit #{startIndexNo}, #{pageSize};
+	</select>
+	
+	<select id="getAdminOrderDuration" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+	  <if test="orderSW == 'DD'">
+			select * from alOrderProcess 
+			  <![CDATA[ where date(orderDate) >= date(#{startDates}) and date(orderDate) <= date(#{endDates}) order by orderDate desc ]]>
+			  limit #{startIndexNo}, #{pageSize};
+		</if>
+	  <if test="orderSW == 'SS'">
+			select * from alOrderProcess where dvStatus = #{dvStatus} order by orderDate desc limit #{startIndexNo}, #{pageSize};
+		</if>
+	</select>
+	
+	<select id="totRecCntAdminorderPeriod" resultType="int">
+	  <if test="orderSW == 'DD'">
+			select count(*) from alOrderProcess <![CDATA[ where date(orderDate) >= date(#{startDates}) and date(orderDate) <= date(#{endDates}) order by orderDate desc ]]>;
+		</if>
+	  <if test="orderSW == 'SS'">
+			select count(*) from alOrderProcess where dvStatus = #{dvStatus} order by orderDate desc;
+		</if>
+	</select>
+	
+	<select id="itemSearchGet" resultType="com.spring.cjs2108_bji.vo.AlcoholVO">
+		<!-- select * from alcohol where itemName like '%${searchString}%' order by idx desc; -->
+		select * from alcohol where itemName like concat('%', #{searchString}, '%') order by idx desc;
+	</select>
+	
+	<insert id="setDbProductInput">
+	  insert into alcohol values (default, #{vo.itemCode}, #{vo.itemName}, #{vo.shortCont}, #{vo.itemPrice}, #{vo.fName}, #{vo.content});
+	</insert>
+	
+	<insert id="cartInsert">
+		insert into cart values (default, #{vo.mid}, #{vo.itemIdx},#{vo.itemName},#{vo.quanTity}, #{vo.itemPrice}, #{vo.pdImage});
+	</insert>
+	
+	<insert id="setOrderInput">
+		insert into alOrderProcess values (default, #{vo.orderIdx}, #{vo.itemIdx},#{vo.pdImage},#{vo.itemName},#{vo.itemPrice},#{vo.quanTitySum},#{vo.mid},
+		#{vo.totCalcPrice}, default ,#{vo.dvTel},#{vo.dvAddress},#{vo.dvName},#{vo.dvPayment},#{vo.dvPaymentNumber},#{vo.dvPayer},#{vo.dvRequest}, default)
+	</insert>
+	
+	<delete id="categoryDelete">
+	  delete from alcohol where idx = #{idx};
+	</delete>
+	
+	<delete id="itemDel">
+		delete from cart where itemIdx = #{itemIdx};
+	</delete>
+
+	<delete id="cartDeleteList">
+		delete from cart where idx = #{cartIdx};
+	</delete>
+	
+	<update id="quanTityMinusProcess">
+	  update cart set quanTity = quanTity - 1 where idx = #{idx};
+	</update>
+	
+	<update id="quanTityPlusProcess">
+	  update cart set quanTity = quanTity + 1 where idx = #{idx};
+	</update>
+	
+	<update id="setMidAddPoint">
+	  update user set point = point + #{point} where mid = #{mid};
+	</update>
+	
+	<update id="setdvStatusUpdate">
+		update alOrderProcess set dvStatus = #{dvStatus} where orderIdx = #{orderIdx};
+	</update>
+	
+</mapper>

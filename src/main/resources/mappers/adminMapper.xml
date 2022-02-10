@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.cjs2108_bji.dao.AdminDAO">
+
+	<select id="totRecCnt" resultType="int">
+	  <if test="level == 99">
+		  select count(*) from user;
+		</if>
+	  <if test="level != 99">
+		  select count(*) from user where level = #{level};
+		</if>
+	</select>
+	
+	<select id="totRecCntMid" resultType="int">
+		select count(*) from user where mid=#{mid};
+	</select>
+	
+	<select id="getNewMember" resultType="int">
+		select count(*) from user where level = 4;
+	</select>
+	
+	<select id="getNewBoard" resultType="int">
+		select count(*) from board where <![CDATA[date_sub( now(), interval 1 day) < wDate]]>;
+	</select>
+
+	
+	<select id="getAdUserList" resultType="com.spring.cjs2108_bji.vo.UserVO">
+		<if test="level == 99">
+			select * from user order by idx desc limit #{startIndexNo}, #{pageSize}
+		</if>
+		<if test="level != 99">
+			select * from user where level=#{level} order by idx desc limit #{startIndexNo}, #{pageSize}
+		</if>
+	</select>
+	
+	<select id="getUserListMid" resultType="com.spring.cjs2108_bji.vo.UserVO">
+		select * from user where mid=#{mid} order by idx desc limit #{startIndexNo}, #{pageSize}
+	</select>
+	
+	<select id="visitChartCalendarGet" resultType="com.spring.cjs2108_bji.vo.BoardVO">
+		select date_format(wDate, '%Y-%m-%d') as wDate, count(*) as count from board group by date_format(wDate, '%Y-%m-%d') order by wDate asc;
+	</select>
+	
+	<select id="drawChartCalendarGet" resultType="com.spring.cjs2108_bji.vo.AlOrderProcessVO">
+		select date_format(orderDate, '%Y-%m-%d') as orderDate, sum(totCalcPrice) as todayAmount from alOrderProcess group by date_format(orderDate, '%Y-%m-%d') order by orderDate asc;
+	</select>
+	
+	<select id="reserveChartCalendarGet" resultType="com.spring.cjs2108_bji.vo.CalendarVO">
+		select date_format(cDate, '%Y-%m-%d') as cDate, count(*) as count from calendar group by date_format(cDate, '%Y-%m-%d') order by cDate asc;
+	</select>
+	
+	<update id="setLevelUpdate">
+		update user set level=#{level} where idx=#{idx};
+	</update>
+		
+	<delete id="deleteUsers">
+		delete from user where idx=#{idx};
+	</delete>
+	
+</mapper>
