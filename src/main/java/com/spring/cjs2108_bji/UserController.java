@@ -1,6 +1,7 @@
 package com.spring.cjs2108_bji;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.Cookie;
@@ -12,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,7 +43,16 @@ public class UserController {
 	
 	//회원 가입처리하기
 	@RequestMapping(value="/userInput", method = RequestMethod.POST)
-	public String userInputPost(MultipartFile fName, UserVO vo) {
+	public String userInputPost(MultipartFile fName, @Validated UserVO vo, BindingResult bindingResult) {
+		if(bindingResult.hasErrors()) { // bindreResult.hasErrors() 결과값이 true이면 앞에서 전송된 자료에 오류가 있다는 것이다.
+			List<ObjectError> list = bindingResult.getAllErrors();
+			for(ObjectError e : list ) {
+				System.out.println("메시지 : " + e.getDefaultMessage());
+			}
+			System.out.println("-----------------------------------");
+			msgFlag = "userInputNo";
+			return "redirect:/msg/" + msgFlag;
+		}
 		// 비밀번호 암호화처리
 		vo.setPwd(passwordEncoder.encode(vo.getPwd()));
 		// DB에 가입회원 등록하기
@@ -177,8 +190,17 @@ public class UserController {
 	
 	//회원 정보 변경하기
 	@RequestMapping(value="/userUpdateOk", method = RequestMethod.POST)
-	public String userUpdatePost(MultipartFile fName, UserVO vo, HttpSession session) {
+	public String userUpdatePost(MultipartFile fName,@Validated UserVO vo,BindingResult bindingResult, HttpSession session) {
 		String nickName = (String) session.getAttribute("sNickName");
+		if(bindingResult.hasErrors()) { // bindreResult.hasErrors() 결과값이 true이면 앞에서 전송된 자료에 오류가 있다는 것이다.
+			List<ObjectError> list = bindingResult.getAllErrors();
+			for(ObjectError e : list ) {
+				System.out.println("메시지 : " + e.getDefaultMessage());
+			}
+			System.out.println("-----------------------------------");
+			msgFlag = "userInputNo";
+			return "redirect:/msg/" + msgFlag;
+		}
 		// 닉네임 중복체크하기(닉네임이 변경되었으면 새롭게 닉네임을 세션에 등록시켜준다.)
 		if(!nickName.equals(vo.getNickName())) {
 			session.setAttribute("sNickName", vo.getNickName());
