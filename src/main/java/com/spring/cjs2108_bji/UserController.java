@@ -198,7 +198,7 @@ public class UserController {
 				System.out.println("메시지 : " + e.getDefaultMessage());
 			}
 			System.out.println("-----------------------------------");
-			msgFlag = "userInputNo";
+			msgFlag = "userUpdateNo";
 			return "redirect:/msg/" + msgFlag;
 		}
 		// 닉네임 중복체크하기(닉네임이 변경되었으면 새롭게 닉네임을 세션에 등록시켜준다.)
